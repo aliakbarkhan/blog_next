@@ -1,16 +1,33 @@
 "use client";
 
+import { BiLike,BiDislike,BiSolidLike,BiSolidDislike } from 'react-icons/bi';
+
+
 import { useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
-
 const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
   const { data: session } = useSession();
   const pathName = usePathname();
   const router = useRouter();
 
   const [copied, setCopied] = useState("");
+  const [like,setLike]=useState(false);
+  const [dislike,setDisLike]=useState(false);
+  const [likecount,setlikeCount]=useState(null);
+  const [dislikecount,setdislikeCount]=useState(null);
+
+
+  const handleLikes = ()=>{
+    if(!like) {setLike(true); setlikeCount(likecount+1);}
+    else {setLike(false); setlikeCount(likecount-1);}
+  }
+
+  const handleDisLikes = ()=>{
+    if(!dislike) {setDisLike(true); setdislikeCount(dislikecount+1);}
+    else {setDisLike(false); setdislikeCount(dislikecount-1);}
+  }
 
   const handleProfileClick = () => {
     console.log(post);
@@ -72,6 +89,20 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
       >
         #{post.tag}
       </p>
+
+       {/*Like Button*/}
+       <div className=' mt-5 flex-center gap-4 '> 
+       <p className=' cursor-pointer'onClick={handleLikes}>
+        {like ? <BiSolidLike/> :<BiLike/>}{likecount}</p>
+       
+       {/*Dislike Button*/}
+        <p className=' cursor-pointer' onClick={handleDisLikes} >
+        {dislike ? <BiSolidDislike/> :<BiDislike/>}{dislikecount}</p>
+
+         </div>
+       
+       
+      
 
       {/*if currently logged in user is the creator and is on profile page then show div */}
       {session?.user.id === post.creator._id && pathName === "/profile" && (
